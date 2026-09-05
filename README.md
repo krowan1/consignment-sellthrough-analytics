@@ -38,6 +38,8 @@ This is the difference between a dashboard number and an analysis: the confound 
 
 Nowhere yet, deliberately. The marts in `data/processed/*.csv` (and `olist.duckdb`) are the governed layer — sell-through logic, seasonality, and share-trend math are all defined once, here, in SQL, and validated against the hypotheses above. Power BI's job is to visualize that layer, not redefine it — connecting a BI tool straight to raw order/item tables invites five different people computing "demand trend" five different ways. When this becomes a Power BI report, it connects to the marts as-is; I'm building that piece separately.
 
+See [DATA_MODELING.md](DATA_MODELING.md) for the reasoning behind the raw/staging/marts split, why this isn't a star schema or a Data Vault model, and what Supabase's platform-provided schemas (`storage`, `vault`) are.
+
 ## Database review (done before adding foreign keys, not after)
 
 The Postgres build is designed as a proper **bronze → silver → gold** (raw → staging → marts) schema, with real foreign keys in `raw` — not just table-name prefixes like the earlier DuckDB-only version. Before adding those constraints, I ran a referential-integrity and key-uniqueness pass against the loaded data, which is the actual point of this section: constraints should be added *because* a review confirmed they'd hold, not discovered broken after a failed migration.
