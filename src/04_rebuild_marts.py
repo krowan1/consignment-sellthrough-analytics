@@ -31,8 +31,15 @@ def main():
     cur = conn.cursor()
 
     schema_sql = open("sql/postgres_schema.sql").read()
+    drops, _, mart_ddl = schema_sql.partition("CREATE TABLE orders")
+    # Only drop the fact/mart tables here -- raw tables (orders, order_items,
+    # etc.) are untouched; this script rebuilds derived tables, not source data.
+    mart_drops = "\n".join(
+        line for line in drops.splitlines()
+        if line.startswith("DROP TABLE") and ("mart_" in line or "fact_order_items" in line)
+    )
     _, _, mart_ddl = schema_sql.partition("-- === Fact table")
-    cur.execute("-- === Fact table" + mart_ddl)
+    cur.execute(mart_drops + "\n-- === Fact table" + mart_ddl)
     conn.commit()
 
     print("Marts rebuilt. Row counts:")
