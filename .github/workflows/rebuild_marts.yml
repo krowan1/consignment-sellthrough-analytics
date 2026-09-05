@@ -1,0 +1,30 @@
+name: Rebuild marts (Supabase)
+
+# Runs weekly so (a) the Supabase project stays active -- API/DB access
+# counts as activity and prevents the free-tier pause -- and (b) this
+# doubles as an end-to-end check that the mart SQL still runs cleanly
+# against real Postgres. Also runnable on demand from the Actions tab
+# or via `gh workflow run rebuild_marts.yml`.
+
+on:
+  schedule:
+    - cron: "0 13 * * 1"  # Mondays, 13:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install psycopg2-binary
+
+      - name: Rebuild marts against Supabase
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: python src/04_rebuild_marts.py

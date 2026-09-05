@@ -1,3 +1,4 @@
 pandas
 duckdb
 matplotlib
+psycopg2-binary

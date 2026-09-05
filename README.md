@@ -38,6 +38,12 @@ This is the difference between a dashboard number and an analysis: the confound 
 
 Nowhere yet, deliberately. The marts in `data/processed/*.csv` (and `olist.duckdb`) are the governed layer — sell-through logic, seasonality, and share-trend math are all defined once, here, in SQL, and validated against the hypotheses above. Power BI's job is to visualize that layer, not redefine it — connecting a BI tool straight to raw order/item tables invites five different people computing "demand trend" five different ways. When this becomes a Power BI report, it connects to the marts as-is; I'm building that piece separately.
 
+## Postgres via Supabase
+
+The marts also run on real Postgres (Supabase), not just DuckDB — `sql/postgres_schema.sql` is the Postgres-native version of the same schema (Postgres has the same `regr_slope`/`regr_r2` aggregates DuckDB does, so the trend math is unchanged). `src/03_migrate_to_supabase.py` loads the raw tables and builds the marts there once; a scheduled GitHub Action (`.github/workflows/rebuild_marts.yml`, weekly) reruns just the mart-building SQL against Supabase, which does two things at once: keeps the free-tier project active (API/DB access resets Supabase's inactivity-pause clock), and re-verifies the pipeline runs cleanly end to end on a real server, not just locally.
+
+The connection string lives only in a local `.env` (gitignored, never committed) and as a `SUPABASE_DB_URL` GitHub Actions secret — never in a file, workflow YAML, or commit.
+
 ## Data & assumptions (read before judging the "sell-through" framing)
 
 Real data: the [Olist Brazilian E-Commerce dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) (public, Kaggle, CC-BY-NC-SA-4.0 — non-commercial use; this is a portfolio/demo project, not a commercial product) — ~99,441 real orders, ~110k delivered line items, across relational tables (orders, items, products, sellers, reviews).
@@ -53,6 +59,10 @@ data/processed/mart_*.csv          exported marts (Power-BI-ready later)
 src/01_build_marts.py              ingest, join, build governed marts
 src/02_charts.py                   illustrative charts (placeholder for Power BI)
 sql/hypothesis_queries.sql         the actual H1/H2/H3 queries against the marts
+sql/postgres_schema.sql            Postgres-native schema (Supabase)
+src/03_migrate_to_supabase.py      one-time load: raw tables + marts onto Supabase
+src/04_rebuild_marts.py            mart-only rebuild, run by the scheduled Action
+.github/workflows/rebuild_marts.yml  weekly Action: keeps Supabase warm, re-verifies pipeline
 r/h3_delivery_satisfaction.R       H3 regression, R² reported honestly
 HYPOTHESES.md                      claim / test / decision for each hypothesis, stated up front
 output/                            charts + regression summaries
