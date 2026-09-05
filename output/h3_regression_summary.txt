@@ -1,0 +1,176 @@
+H3: review_score ~ delivery_days + price + freight_value + category
+R-squared: 0.1080 | Adjusted R-squared: 0.1074 | N: 109959
+
+
+Call:
+lm(formula = review_score ~ delivery_days + price + freight_value + 
+    category, data = df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.3628 -0.4342  0.5226  0.8236  5.8985 
+
+Coefficients:
+                                                        Estimate Std. Error
+(Intercept)                                            4.547e+00  8.920e-02
+delivery_days                                         -4.913e-02  4.500e-04
+price                                                  2.726e-05  2.463e-05
+freight_value                                          3.651e-03  2.850e-04
+categoryair_conditioning                               1.424e-02  1.165e-01
+categoryart                                            1.135e-02  1.273e-01
+categoryarts_and_craftmanship                         -2.022e-01  2.746e-01
+categoryaudio                                         -1.263e-01  1.114e-01
+categoryauto                                           7.500e-02  9.100e-02
+categorybaby                                           5.374e-02  9.184e-02
+categorybed_bath_table                                -7.321e-02  8.970e-02
+categorybooks_general_interest                         4.673e-01  1.046e-01
+categorybooks_imported                                 3.039e-01  1.906e-01
+categorybooks_technical                                3.065e-01  1.185e-01
+categorycds_dvds_musicals                              5.549e-01  3.516e-01
+categorychristmas_supplies                             1.572e-01  1.387e-01
+categorycine_photo                                     1.946e-01  1.753e-01
+categorycomputers                                      1.197e-01  1.281e-01
+categorycomputers_accessories                          8.123e-03  9.002e-02
+categoryconsoles_games                                 1.812e-01  9.691e-02
+categoryconstruction_tools_construction               -2.210e-02  9.828e-02
+categoryconstruction_tools_lights                     -8.937e-02  1.158e-01
+categoryconstruction_tools_safety                     -7.930e-02  1.295e-01
+categorycool_stuff                                     1.627e-01  9.122e-02
+categorycostruction_tools_garden                       7.408e-02  1.217e-01
+categorycostruction_tools_tools                        3.959e-01  1.557e-01
+categorydiapers_and_hygiene                           -7.006e-01  2.274e-01
+categorydrinks                                         3.360e-02  1.111e-01
+categorydvds_blu_ray                                   1.891e-01  1.857e-01
+categoryelectronics                                    8.401e-02  9.223e-02
+categoryfashio_female_clothing                        -5.751e-02  2.077e-01
+categoryfashion_bags_accessories                       1.289e-01  9.335e-02
+categoryfashion_childrens_clothes                      8.449e-01  4.893e-01
+categoryfashion_male_clothing                         -2.249e-01  1.448e-01
+categoryfashion_shoes                                  4.257e-01  1.193e-01
+categoryfashion_sport                                  3.271e-01  2.488e-01
+categoryfashion_underwear_beach                        1.111e-01  1.441e-01
+categoryfixed_telephony                               -2.396e-01  1.195e-01
+categoryflowers                                        3.488e-01  2.453e-01
+categoryfood                                           1.235e-01  1.060e-01
+categoryfood_drink                                     2.900e-01  1.178e-01
+categoryfurniture_bedroom                              1.941e-01  1.538e-01
+categoryfurniture_decor                               -5.142e-02  8.999e-02
+categoryfurniture_living_room                         -6.562e-02  1.058e-01
+categoryfurniture_mattress_and_upholstery             -1.068e-01  2.274e-01
+categorygarden_tools                                   1.146e-01  9.097e-02
+categoryhealth_beauty                                  1.538e-01  8.978e-02
+categoryhome_appliances                                1.546e-01  9.974e-02
+categoryhome_appliances_2                              8.389e-02  1.221e-01
+categoryhome_comfort_2                                -2.343e-01  2.606e-01
+categoryhome_confort                                  -1.260e-01  1.080e-01
+categoryhome_construction                             -3.684e-02  1.031e-01
+categoryhousewares                                     1.231e-02  9.021e-02
+categoryindustry_commerce_and_business                -1.208e-02  1.186e-01
+categorykitchen_dining_laundry_garden_furniture       -9.146e-02  1.178e-01
+categoryla_cuisine                                    -2.934e-01  3.641e-01
+categoryluggage_accessories                            2.205e-01  9.698e-02
+categorymarket_place                                   5.300e-02  1.151e-01
+categorymusic                                          1.603e-01  2.248e-01
+categorymusical_instruments                            1.941e-01  1.019e-01
+categoryoffice_furniture                              -1.701e-01  9.432e-02
+categoryparty_supplies                                -3.389e-01  2.156e-01
+categorypc_gamer                                      -5.161e-01  4.587e-01
+categoryperfumery                                      1.806e-01  9.153e-02
+categorypet_shop                                       1.404e-01  9.348e-02
+categoryportateis_cozinha_e_preparadores_de_alimentos -8.135e-01  3.516e-01
+categorysecurity_and_services                         -1.389e+00  9.045e-01
+categorysignaling_and_security                        -7.205e-02  1.272e-01
+categorysmall_appliances                               1.117e-01  1.017e-01
+categorysmall_appliances_home_oven_and_coffee          2.221e-01  1.735e-01
+categorysports_leisure                                 1.350e-01  8.992e-02
+categorystationery                                     2.458e-01  9.251e-02
+categorytablets_printing_image                         1.495e-01  1.671e-01
+categorytelephony                                      1.479e-02  9.095e-02
+categorytoys                                           1.566e-01  9.108e-02
+categoryunknown                                       -5.939e-02  9.462e-02
+categorywatches_gifts                                  6.962e-02  9.032e-02
+                                                       t value Pr(>|t|)    
+(Intercept)                                             50.975  < 2e-16 ***
+delivery_days                                         -109.175  < 2e-16 ***
+price                                                    1.107  0.26845    
+freight_value                                           12.808  < 2e-16 ***
+categoryair_conditioning                                 0.122  0.90273    
+categoryart                                              0.089  0.92893    
+categoryarts_and_craftmanship                           -0.736  0.46168    
+categoryaudio                                           -1.134  0.25681    
+categoryauto                                             0.824  0.40983    
+categorybaby                                             0.585  0.55847    
+categorybed_bath_table                                  -0.816  0.41438    
+categorybooks_general_interest                           4.467 7.95e-06 ***
+categorybooks_imported                                   1.594  0.11086    
+categorybooks_technical                                  2.587  0.00969 ** 
+categorycds_dvds_musicals                                1.578  0.11452    
+categorychristmas_supplies                               1.133  0.25712    
+categorycine_photo                                       1.110  0.26695    
+categorycomputers                                        0.935  0.34990    
+categorycomputers_accessories                            0.090  0.92810    
+categoryconsoles_games                                   1.870  0.06151 .  
+categoryconstruction_tools_construction                 -0.225  0.82211    
+categoryconstruction_tools_lights                       -0.771  0.44045    
+categoryconstruction_tools_safety                       -0.612  0.54041    
+categorycool_stuff                                       1.784  0.07447 .  
+categorycostruction_tools_garden                         0.609  0.54283    
+categorycostruction_tools_tools                          2.542  0.01101 *  
+categorydiapers_and_hygiene                             -3.081  0.00206 ** 
+categorydrinks                                           0.302  0.76236    
+categorydvds_blu_ray                                     1.019  0.30840    
+categoryelectronics                                      0.911  0.36237    
+categoryfashio_female_clothing                          -0.277  0.78185    
+categoryfashion_bags_accessories                         1.381  0.16737    
+categoryfashion_childrens_clothes                        1.727  0.08420 .  
+categoryfashion_male_clothing                           -1.553  0.12034    
+categoryfashion_shoes                                    3.568  0.00036 ***
+categoryfashion_sport                                    1.314  0.18872    
+categoryfashion_underwear_beach                          0.771  0.44060    
+categoryfixed_telephony                                 -2.005  0.04497 *  
+categoryflowers                                          1.422  0.15510    
+categoryfood                                             1.165  0.24418    
+categoryfood_drink                                       2.461  0.01386 *  
+categoryfurniture_bedroom                                1.262  0.20683    
+categoryfurniture_decor                                 -0.571  0.56776    
+categoryfurniture_living_room                           -0.620  0.53496    
+categoryfurniture_mattress_and_upholstery               -0.469  0.63875    
+categorygarden_tools                                     1.259  0.20796    
+categoryhealth_beauty                                    1.713  0.08677 .  
+categoryhome_appliances                                  1.550  0.12119    
+categoryhome_appliances_2                                0.687  0.49192    
+categoryhome_comfort_2                                  -0.899  0.36862    
+categoryhome_confort                                    -1.167  0.24326    
+categoryhome_construction                               -0.357  0.72076    
+categoryhousewares                                       0.136  0.89145    
+categoryindustry_commerce_and_business                  -0.102  0.91888    
+categorykitchen_dining_laundry_garden_furniture         -0.776  0.43747    
+categoryla_cuisine                                      -0.806  0.42031    
+categoryluggage_accessories                              2.274  0.02296 *  
+categorymarket_place                                     0.461  0.64515    
+categorymusic                                            0.713  0.47589    
+categorymusical_instruments                              1.905  0.05680 .  
+categoryoffice_furniture                                -1.804  0.07127 .  
+categoryparty_supplies                                  -1.572  0.11599    
+categorypc_gamer                                        -1.125  0.26055    
+categoryperfumery                                        1.973  0.04849 *  
+categorypet_shop                                         1.502  0.13302    
+categoryportateis_cozinha_e_preparadores_de_alimentos   -2.314  0.02068 *  
+categorysecurity_and_services                           -1.536  0.12452    
+categorysignaling_and_security                          -0.566  0.57106    
+categorysmall_appliances                                 1.098  0.27205    
+categorysmall_appliances_home_oven_and_coffee            1.280  0.20048    
+categorysports_leisure                                   1.502  0.13319    
+categorystationery                                       2.657  0.00790 ** 
+categorytablets_printing_image                           0.895  0.37086    
+categorytelephony                                        0.163  0.87081    
+categorytoys                                             1.719  0.08558 .  
+categoryunknown                                         -0.628  0.53024    
+categorywatches_gifts                                    0.771  0.44085    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.273 on 109882 degrees of freedom
+Multiple R-squared:  0.108,	Adjusted R-squared:  0.1074 
+F-statistic: 175.1 on 76 and 109882 DF,  p-value: < 2.2e-16
+

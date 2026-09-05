@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.DS_Store
+data/processed/olist.duckdb
+data/raw/olist_geolocation_dataset.csv
