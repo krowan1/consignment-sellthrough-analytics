@@ -1,10 +1,26 @@
 """
 03_migrate_to_supabase.py
 
-Loads the same Olist raw tables + rebuilds the same marts on real
-Postgres (Supabase), using sql/postgres_schema.sql. Reads the connection
-string from a local .env file (SUPABASE_DB_URL=...), which is gitignored
-and never committed -- see README "Postgres via Supabase."
+Loads the Olist raw tables into a proper raw/staging/marts (bronze/
+silver/gold) Postgres schema on Supabase, applying two data-quality
+fixes surfaced by a pre-migration review (see README "Database Review"):
+
+  1. raw.category_translation is missing English translations for two
+     categories that real products reference ('pc_gamer' and
+     'portateis_cozinha_e_preparadores_de_alimentos') -- added explicitly
+     below so the products -> category_translation FK is enforceable
+     honestly instead of silently failing or being left unconstrained.
+  2. raw.reviews has no usable single-column key: the same review_id
+     appears against multiple order_ids, and 547 orders have more than
+     one review row. The composite (review_id, order_id) IS unique and
+     is used as the real primary key; marts.order_satisfaction resolves
+     the order-level fan-out (rare multi-review orders) to one score per
+     order before joining to line items, so no line item gets counted
+     twice.
+
+Load order matters here because of real foreign keys: parents before
+children (category_translation/sellers -> products -> orders ->
+order_items/reviews).
 
 Run from repo root: python src/03_migrate_to_supabase.py
 """
@@ -13,6 +29,24 @@ import csv
 import psycopg2
 
 RAW = "data/raw"
+
+# Data-quality fix #1 (see docstring): translations Olist's own lookup
+# table is missing for categories that real products actually use.
+MISSING_TRANSLATIONS = [
+    ("pc_gamer", "pc_gamer"),  # already effectively English/brand term
+    ("portateis_cozinha_e_preparadores_de_alimentos", "portable_kitchen_and_food_prep"),
+]
+
+# (schema-qualified table, source CSV, whether this table has FKs that
+# require its parents to already be loaded -- drives load order)
+LOAD_ORDER = [
+    ("raw.category_translation", "product_category_name_translation.csv"),
+    ("raw.sellers", "olist_sellers_dataset.csv"),
+    ("raw.products", "olist_products_dataset.csv"),
+    ("raw.orders", "olist_orders_dataset.csv"),
+    ("raw.order_items", "olist_order_items_dataset.csv"),
+    ("raw.reviews", "olist_order_reviews_dataset.csv"),
+]
 
 
 def load_db_url() -> str:
@@ -24,33 +58,21 @@ def load_db_url() -> str:
     return url.strip()
 
 
-TABLE_FILES = {
-    "orders": "olist_orders_dataset.csv",
-    "order_items": "olist_order_items_dataset.csv",
-    "products": "olist_products_dataset.csv",
-    "category_translation": "product_category_name_translation.csv",
-    "reviews": "olist_order_reviews_dataset.csv",
-    "sellers": "olist_sellers_dataset.csv",
-}
-
-
 def main():
     url = load_db_url()
     conn = psycopg2.connect(url)
-    conn.autocommit = False
     cur = conn.cursor()
 
-    print("Applying schema (sql/postgres_schema.sql, tables only)...")
+    print("Applying schema (sql/postgres_schema.sql)...")
     schema_sql = open("sql/postgres_schema.sql").read()
-    # Split off just the CREATE TABLE (empty) statements for raw tables;
-    # run those first, load data, then run the fact/mart CREATE TABLE AS
-    # statements separately so COPY has tables to load into.
-    raw_ddl, _, mart_ddl = schema_sql.partition("-- === Fact table")
+    # Run just the DROP/CREATE SCHEMA + raw table DDL first; staging/marts
+    # are CREATE TABLE AS and need raw data loaded before they can run.
+    raw_ddl, _, rest = schema_sql.partition("-- =========================================================================\n-- STAGING")
     cur.execute(raw_ddl)
     conn.commit()
-    print("Raw table DDL applied.")
+    print("Schemas + raw table DDL applied.")
 
-    for table, filename in TABLE_FILES.items():
+    for table, filename in LOAD_ORDER:
         path = os.path.join(RAW, filename)
         with open(path, encoding="utf-8-sig") as f:
             reader = csv.reader(f)
@@ -62,16 +84,26 @@ def main():
                 f,
             )
         conn.commit()
+
+        if table == "raw.category_translation":
+            cur.executemany(
+                "INSERT INTO raw.category_translation VALUES (%s, %s) ON CONFLICT DO NOTHING",
+                MISSING_TRANSLATIONS,
+            )
+            conn.commit()
+            print(f"  Patched raw.category_translation with {len(MISSING_TRANSLATIONS)} missing translations")
+
         cur.execute(f"SELECT COUNT(*) FROM {table}")
         print(f"  Loaded {table}: {cur.fetchone()[0]:,} rows")
 
-    print("\nBuilding fact + mart tables...")
-    cur.execute("-- === Fact table" + mart_ddl)
+    print("\nBuilding staging + marts tables...")
+    _, _, staging_and_marts = schema_sql.partition("-- STAGING")
+    cur.execute("-- STAGING" + staging_and_marts)
     conn.commit()
 
-    for t in ["fact_order_items", "mart_category_monthly_demand",
-              "mart_category_summary", "mart_category_share_trend",
-              "mart_order_satisfaction"]:
+    for t in ["staging.fact_order_items", "marts.category_monthly_demand",
+              "marts.category_summary", "marts.category_share_trend",
+              "marts.order_satisfaction"]:
         cur.execute(f"SELECT COUNT(*) FROM {t}")
         print(f"  {t}: {cur.fetchone()[0]:,} rows")
 

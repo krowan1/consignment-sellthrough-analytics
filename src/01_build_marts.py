@@ -143,6 +143,22 @@ con.execute("""
 """)
 
 # --- Mart: order-level fact for the delivery/satisfaction regression (H3)
+# Database review finding: raw reviews has no clean single-column key --
+# the same review_id appears against multiple order_ids, and 547 orders
+# have more than one review row. Joining fact_order_items to reviews
+# directly on order_id would silently duplicate line-item rows for those
+# 547 orders. Reviews are resolved to one score per order (average, in
+# case of disagreement) BEFORE joining, so the grain stays one row per
+# delivered line item and no order's items get double-counted. See
+# sql/postgres_schema.sql for the equivalent Postgres version and
+# README "Database Review" for how this was found.
+con.execute("""
+    CREATE TABLE review_per_order AS
+    SELECT order_id, ROUND(AVG(review_score)) AS review_score
+    FROM reviews
+    WHERE review_score IS NOT NULL
+    GROUP BY order_id
+""")
 con.execute("""
     CREATE TABLE mart_order_satisfaction AS
     SELECT
@@ -151,10 +167,10 @@ con.execute("""
         f.price,
         f.freight_value,
         f.delivery_days,
-        r.review_score
+        rpo.review_score
     FROM fact_order_items f
-    JOIN reviews r USING (order_id)
-    WHERE f.delivery_days IS NOT NULL AND r.review_score IS NOT NULL
+    JOIN review_per_order rpo USING (order_id)
+    WHERE f.delivery_days IS NOT NULL
 """)
 
 for t in ["mart_category_monthly_demand", "mart_category_summary", "mart_category_share_trend", "mart_order_satisfaction"]:
