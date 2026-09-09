@@ -7,9 +7,12 @@ fixes surfaced by a pre-migration review (see README "Database Review"):
 
   1. raw.category_translation is missing English translations for two
      categories that real products reference ('pc_gamer' and
-     'portateis_cozinha_e_preparadores_de_alimentos') -- added explicitly
+     'portateis_cozinha_e_preparadores_de_alimentos'), added explicitly
      below so the products -> category_translation FK is enforceable
      honestly instead of silently failing or being left unconstrained.
+     'pc_gamer' maps to itself (already an English/brand term, so the
+     fix changes nothing for that one row), so it's kept commented out
+     below, for reference, rather than deleted.
   2. raw.reviews has no usable single-column key: the same review_id
      appears against multiple order_ids, and 547 orders have more than
      one review row. The composite (review_id, order_id) IS unique and
@@ -33,12 +36,13 @@ RAW = "data/raw"
 # Data-quality fix #1 (see docstring): translations Olist's own lookup
 # table is missing for categories that real products actually use.
 MISSING_TRANSLATIONS = [
-    ("pc_gamer", "pc_gamer"),  # already effectively English/brand term
+    # ("pc_gamer", "pc_gamer"),  # no-op fix: already English/brand term,
+    # kept commented out for reference rather than removed.
     ("portateis_cozinha_e_preparadores_de_alimentos", "portable_kitchen_and_food_prep"),
 ]
 
 # (schema-qualified table, source CSV, whether this table has FKs that
-# require its parents to already be loaded -- drives load order)
+# require its parents to already be loaded, which drives load order)
 LOAD_ORDER = [
     ("raw.category_translation", "product_category_name_translation.csv"),
     ("raw.sellers", "olist_sellers_dataset.csv"),

@@ -3,9 +3,9 @@
 
 Rebuilds just the staging + marts tables (raw tables don't change) against
 Supabase Postgres, and logs row counts + a headline KPI. Run by the
-scheduled GitHub Action (.github/workflows/rebuild_marts.yml) -- keeps
-the free-tier Supabase project active and re-verifies the pipeline still
-runs cleanly end to end against real Postgres.
+scheduled GitHub Action (.github/workflows/rebuild_marts.yml), which
+keeps the free-tier Supabase project active and re-verifies the pipeline
+still runs cleanly end to end against real Postgres.
 
 Reads SUPABASE_DB_URL from the environment (GitHub Actions secret in CI;
 falls back to a local .env for manual runs).

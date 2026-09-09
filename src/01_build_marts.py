@@ -2,10 +2,11 @@
 01_build_marts.py
 
 Loads the real Olist Brazilian e-commerce dataset (public, Kaggle:
-olistbr/brazilian-ecommerce, CC-BY-NC-SA-4.0 -- ~99k real orders across
-relational tables) into DuckDB and builds governed marts that answer the
-hypotheses in HYPOTHESES.md. Marts, not raw tables, are what a BI tool
-(Power BI) should ever connect to -- see README "Where Power BI fits."
+olistbr/brazilian-ecommerce, CC-BY-NC-SA-4.0), roughly 99k real orders
+across relational tables, into DuckDB and builds governed marts that
+answer the hypotheses in HYPOTHESES.md. Marts, not raw tables, are what
+a BI tool (Power BI) should ever connect to; see README "Where Power BI
+fits."
 
 DuckDB is used instead of a live Postgres server so the repo runs for
 anyone who clones it with zero setup; the SQL is written in portable
@@ -112,7 +113,7 @@ con.execute("""
 # overall marketplace growth over this period (almost every category's raw
 # count trends up simply because total order volume scaled up). Trending
 # each category's *share* of total monthly demand isolates real relative
-# growth/decline -- the actual test of H2.
+# growth/decline, the actual test of H2.
 con.execute("""
     CREATE TABLE mart_category_share_trend AS
     WITH monthly AS (
