@@ -7,9 +7,11 @@ fixes surfaced by a pre-migration review (see README "Database Review"):
 
   1. raw.category_translation is missing English translations for two
      categories that real products reference ('pc_gamer' and
-     'portateis_cozinha_e_preparadores_de_alimentos') -- added explicitly
+     'portateis_cozinha_e_preparadores_de_alimentos'), added explicitly
      below so the products -> category_translation FK is enforceable
      honestly instead of silently failing or being left unconstrained.
+     'pc_gamer' maps to itself (already an English/brand term), but the
+     row still has to exist for the FK, so it's inserted like the other.
   2. raw.reviews has no usable single-column key: the same review_id
      appears against multiple order_ids, and 547 orders have more than
      one review row. The composite (review_id, order_id) IS unique and
@@ -38,7 +40,7 @@ MISSING_TRANSLATIONS = [
 ]
 
 # (schema-qualified table, source CSV, whether this table has FKs that
-# require its parents to already be loaded -- drives load order)
+# require its parents to already be loaded, which drives load order)
 LOAD_ORDER = [
     ("raw.category_translation", "product_category_name_translation.csv"),
     ("raw.sellers", "olist_sellers_dataset.csv"),

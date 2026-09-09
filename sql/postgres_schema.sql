@@ -15,7 +15,7 @@ CREATE SCHEMA staging;
 CREATE SCHEMA marts;
 
 -- =========================================================================
--- RAW (bronze) -- normalized, real FKs, as close to source as possible
+-- RAW (bronze): normalized, real FKs, as close to source as possible
 -- =========================================================================
 
 CREATE TABLE raw.category_translation (
@@ -65,7 +65,7 @@ CREATE TABLE raw.order_items (
     PRIMARY KEY (order_id, order_item_id)
 );
 
--- Database review finding: review_id is NOT unique on its own -- the same
+-- Database review finding: review_id is NOT unique on its own. The same
 -- review_id appears against multiple distinct order_ids with identical
 -- score/date (98,410 distinct review_id across 99,224 rows). Real grain
 -- is (review_id, order_id); a bare review_id PRIMARY KEY would have
@@ -82,7 +82,7 @@ CREATE TABLE raw.reviews (
 );
 
 -- =========================================================================
--- STAGING (silver) -- cleaned, joined, single grain (delivered line items)
+-- STAGING (silver): cleaned, joined, single grain (delivered line items)
 -- =========================================================================
 
 CREATE TABLE staging.fact_order_items AS
@@ -105,7 +105,7 @@ WHERE o.order_status = 'delivered'
   AND o.order_delivered_customer_date IS NOT NULL;
 
 -- =========================================================================
--- MARTS (gold) -- denormalized, business-facing, no FKs by design
+-- MARTS (gold): denormalized, business-facing, no FKs by design
 -- =========================================================================
 
 CREATE TABLE marts.category_monthly_demand AS
@@ -175,7 +175,7 @@ ORDER BY share_trend_slope DESC;
 
 -- Database review finding #3: 547 orders have more than one row in
 -- raw.reviews (a second review submission on the same order), which
--- would silently duplicate line-item rows if joined directly -- inflating
+-- would silently duplicate line-item rows if joined directly, inflating
 -- the H3 regression's N for those orders without anyone noticing. Reviews
 -- are resolved to one score per order (average, in case of disagreement)
 -- BEFORE joining to line items, so the grain stays one row per delivered

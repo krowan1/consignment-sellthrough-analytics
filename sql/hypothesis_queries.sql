@@ -4,7 +4,8 @@
 -- See HYPOTHESES.md for the claim/decision framing behind each query.
 
 -- H1: Is demand seasonal within categories? (top 10 categories by volume,
--- ranked by demand_volatility_cv -- coefficient of variation across months)
+-- ranked by demand_volatility_cv, the coefficient of variation across
+-- months)
 SELECT category, total_items, avg_monthly_items, demand_volatility_cv
 FROM mart_category_summary
 ORDER BY total_items DESC
@@ -21,8 +22,8 @@ WHERE category = (
 )
 ORDER BY order_month;
 
--- H2: Which categories are gaining or losing SHARE of total demand --
--- i.e. real relative growth/decline, net of overall platform growth
+-- H2: Which categories are gaining or losing SHARE of total demand?
+-- (Real relative growth/decline, net of overall platform growth.)
 -- (raw item-count trend is misleading here; see mart_category_share_trend
 -- comment in src/01_build_marts.py for why).
 SELECT category, total_items, share_trend_slope, share_trend_r2
@@ -36,7 +37,7 @@ ORDER BY share_trend_slope ASC
 LIMIT 8;
 
 -- H3 supporting query: raw correlation direction check (the actual R^2
--- test runs in r/h3_delivery_satisfaction.R) -- average review score by
+-- test runs in r/h3_delivery_satisfaction.R). Average review score by
 -- delivery-speed bucket, as a sanity check anyone can read without R.
 SELECT
     CASE

@@ -5,7 +5,7 @@
 # fast" as a demand-side lever, not just an ops cost.
 #
 # Honest framing: review_score is ordinal (1-5) and OLS on an ordinal
-# outcome is a simplification -- reported and used here because the
+# outcome is a simplification, reported and used here because the
 # coefficient direction/size and R^2 are the things this analysis needs,
 # not a publication-grade model. A real deployment would use ordinal
 # logistic regression; that tradeoff is stated, not hidden.
