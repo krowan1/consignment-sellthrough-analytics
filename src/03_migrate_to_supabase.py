@@ -10,9 +10,8 @@ fixes surfaced by a pre-migration review (see README "Database Review"):
      'portateis_cozinha_e_preparadores_de_alimentos'), added explicitly
      below so the products -> category_translation FK is enforceable
      honestly instead of silently failing or being left unconstrained.
-     'pc_gamer' maps to itself (already an English/brand term, so the
-     fix changes nothing for that one row), so it's kept commented out
-     below, for reference, rather than deleted.
+     'pc_gamer' maps to itself (already an English/brand term), but the
+     row still has to exist for the FK, so it's inserted like the other.
   2. raw.reviews has no usable single-column key: the same review_id
      appears against multiple order_ids, and 547 orders have more than
      one review row. The composite (review_id, order_id) IS unique and
@@ -36,8 +35,7 @@ RAW = "data/raw"
 # Data-quality fix #1 (see docstring): translations Olist's own lookup
 # table is missing for categories that real products actually use.
 MISSING_TRANSLATIONS = [
-    # ("pc_gamer", "pc_gamer"),  # no-op fix: already English/brand term,
-    # kept commented out for reference rather than removed.
+    ("pc_gamer", "pc_gamer"),  # already effectively English/brand term
     ("portateis_cozinha_e_preparadores_de_alimentos", "portable_kitchen_and_food_prep"),
 ]
 
